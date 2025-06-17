@@ -1,14 +1,15 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Upload, Download, FileSpreadsheet, Loader2 } from 'lucide-react';
+import { Upload, Download, FileSpreadsheet, Loader2, ToggleLeft, ToggleRight } from 'lucide-react';
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<{ tr: string; en: string; version: string } | null>(null);
+  const [results, setResults] = useState<{ tr: string; en: string; combined?: string } | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [conversionType, setConversionType] = useState<'app' | 'backend'>('app');
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -56,6 +57,7 @@ export default function Home() {
     
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('type', conversionType);
 
     try {
       const response = await fetch('/api/convert', {
@@ -102,6 +104,42 @@ export default function Home() {
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+          {/* Conversion Type Toggle */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+              Conversion Type
+            </label>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => setConversionType('app')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                  conversionType === 'app'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                {conversionType === 'app' ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
+                App UI (Separate Files)
+              </button>
+              <button
+                onClick={() => setConversionType('backend')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                  conversionType === 'backend'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                {conversionType === 'backend' ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
+                Backend (Single File)
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
+              {conversionType === 'app' 
+                ? 'Creates separate JSON files for each language' 
+                : 'Creates a single JSON file with both languages'}
+            </p>
+          </div>
+
           {/* Upload Area */}
           <div
             className={`relative border-2 border-dashed rounded-xl p-8 transition-all ${
@@ -164,30 +202,44 @@ export default function Home() {
           {results && (
             <div className="mt-8 space-y-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Conversion Complete! (Version {results.version})
+                Conversion Complete!
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button
-                  onClick={() => downloadFile(results.tr, `localization_dev_${results.version}_tr.json`)}
-                  className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
-                >
-                  <Download className="w-5 h-5" />
-                  Download Turkish JSON
-                </button>
-                <button
-                  onClick={() => downloadFile(results.en, `localization_dev_${results.version}_en.json`)}
-                  className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
-                >
-                  <Download className="w-5 h-5" />
-                  Download English JSON
-                </button>
+                {conversionType === 'app' ? (
+                  <>
+                    <button
+                      onClick={() => downloadFile(results.tr, 'localization_tr.json')}
+                      className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    >
+                      <Download className="w-5 h-5" />
+                      Download Turkish JSON
+                    </button>
+                    <button
+                      onClick={() => downloadFile(results.en, 'localization_en.json')}
+                      className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    >
+                      <Download className="w-5 h-5" />
+                      Download English JSON
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => downloadFile(results.combined!, 'localization.json')}
+                    className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 md:col-span-2"
+                  >
+                    <Download className="w-5 h-5" />
+                    Download Combined JSON
+                  </button>
+                )}
               </div>
             </div>
           )}
         </div>
 
         <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-          Upload your General-App-UI-Translations.xlsx file to convert it to JSON format
+          {conversionType === 'app' 
+            ? 'Upload your General-App-UI-Translations.xlsx file'
+            : 'Upload your backendlocalization.xlsx file'}
         </div>
       </div>
     </main>
