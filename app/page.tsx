@@ -241,6 +241,10 @@ export default function Home() {
             ? 'Upload your General-App-UI-Translations.xlsx file'
             : 'Upload your backendlocalization.xlsx file'}
         </div>
+        
+        <footer className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400">
+          Made with ❤️ by Kaan Kihtir
+        </footer>
       </div>
     </main>
   );
