@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Localization Converter
 
-## Getting Started
+A web application to convert Excel translation files to JSON format. Supports both App UI translations (separate files per language) and Backend translations (single file with both languages).
 
-First, run the development server:
+## Features
+
+- 🎯 **Two conversion modes**:
+  - **App UI**: Creates separate JSON files for each language (Turkish and English)
+  - **Backend**: Creates a single JSON file containing both languages
+- 📤 **Drag & Drop** file upload
+- ⚡ **Instant conversion** and download
+- 🎨 **Modern UI** with dark mode support
+- 🚀 **Fast processing** with Next.js
+
+## Usage
+
+1. Visit the deployed application
+2. Select conversion type (App UI or Backend)
+3. Upload your Excel file:
+   - For App UI: Use `General-App-UI-Translations.xlsx`
+   - For Backend: Use `backendlocalization.xlsx`
+4. Download the converted JSON file(s)
+
+## Excel File Format
+
+### App UI Format
+Columns: `Key`, `HAS_LINKS`, `tr_TR`, `en_INT`, `tr_TR_Link_Text`, `tr_TR_Link_URL`, `en_INT_Link_Text`, `en_INT_Link_URL`
+
+### Backend Format
+Columns: `Key`, `en`, `tr`
+
+## Development
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build for production
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deployment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Deploy to Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/kkihtir/localization-tkpay)
 
-## Learn More
+Or manually:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx vercel
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Next.js 15](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [xlsx](https://www.npmjs.com/package/xlsx) for Excel processing
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
